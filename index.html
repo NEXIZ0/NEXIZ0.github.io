@@ -1,3 +1,115 @@
-# NEXIZ0.github.io
+<!DOCTYPE html>
+<html>
 
-<h1>test</h1>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Dorker</title>
+  <style>
+    /* Reset default browser styles */
+    * {
+      font-family: Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    hr {
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Google Dorker</h1>
+  <input class="domain" id="domain" oninput="updateSearchQuery()" size="50" value="voorivex.academy"></input><select name="site" id="site" onchange="updateSearchQuery()()">
+    <option style="color: #FBBC05; background-color: #4285F4;" value="Google">Google</option>
+    <option style="color: #235FAF; background-color: #02B7E9;" value="Bing">Bing</option>
+    <option style="color: #FC3F1D; background-color: #000000;" value="Yandex">Yandex</option>
+    <option style="color: #6000D3;" value="Yahoo">Yahoo</option>
+  </select>
+  <br><br>
+  <div class="results" id="results"></div>
+  <script>
+    function updateSearchQuery() {
+      var domain = document.getElementById('domain').value.trim();
+      var dorks = [
+        'site:' + domain + ' inurl:&',
+        'site:' + domain + ' ext:php | ext:aspx | ext:asp | ext:jsp | ext:html | ext:htm',
+        'site:' + domain + ' ext:log | ext:txt | ext:conf | ext:cnf | ext:ini | ext:env | ext:sh | ext:bak | ext:backup | ext:swp | ext:old | ext:~ | ext:git | ext:svn | ext:htpasswd | ext:htaccess | ext:xml | ext:reg | ext:inf | ext:rdp | ext:cfg | ext:ora',
+        'site:' + domain + ' inurl:url= | inurl:return= | inurl:next= | inurl:redir= inurl:http',
+        'site:' + domain + ' inurl:http | inurl:url= | inurl:path= | inurl:dest= | inurl:html= | inurl:data= | inurl:domain= | inurl:page= inurl:&',
+        'site:' + domain + ' inurl:config | inurl:env | inurl:setting | inurl:backup | inurl:admin | inurl:php',
+        'site:' + domain + ' inurl:email= | inurl:phone= | inurl:password= | inurl:secret= inurl:&',
+        'site:' + domain + ' inurl:apidocs | inurl:api-docs | inurl:swagger | inurl:api-explorer',
+        'site:' + domain + ' inurl:cmd | inurl:exec= | inurl:query= | inurl:code= | inurl:do= | inurl:run= | inurl:read= | inurl:ping= inurl:&',
+        'site:' + domain + ' inurl:(unsubscribe|register|feedback|signup|join|contact|profile|user|comment|api|developer|affiliate|upload|mobile|upgrade|password)',
+        'site:' + domain + ' intitle:"Welcome to Nginx"',
+        'site:' + domain + ' (ext:php OR ext:aspx OR ext:asp OR ext:txt OR ext:jsp OR ext:html OR ext:xml OR ext:bak)',
+        'site:' + domain + ' ext:sql | ext:dbf | ext:mdb | ext:log',
+        'site:' + domain + ' ext:bkf | ext:bkp | ext:bak | ext:old | ext:backup',
+        'site:' + domain + ' inurl:login | inurl:signin | intitle:Login | intitle: signin | inurl:auth',
+        'site:' + domain + ' ext:doc | ext:docx | ext:odt | ext:pdf | ext:rtf | ext:sxw | ext:psw | ext:ppt | ext:pptx | ext:pps | ext:csv',
+        'site:' + domain + ' ext:action | ext:struts | ext:do',
+        'site:' + domain + ' filetype:wsdl | filetype:WSDL | ext:svc | inurl:wsdl | Filetype: ?wsdl | inurl:asmx?wsdl | inurl:jws?wsdl | intitle:_vti_bin/site ',
+        'site:' + domain + ' filetype:config',
+        'site:.s3.amazonaws.com "'+domain+'"',
+        'site:stackoverflow.com "'+domain+'"',
+        'link:' + domain,
+        'site:*.'+domain,
+        'site:*.*.'+domain,
+
+      ];
+
+      var resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      dorks.forEach(function (dork) {
+        var site = document.getElementById("site");
+        if(site.value == "Google"){
+            var link = 'https://www.google.com/search?q=' + encodeURIComponent(dork);
+            var linkElement = document.createElement('a');
+            linkElement.href = link;
+            linkElement.target = '_blank';
+            linkElement.textContent = dork;
+            resultsDiv.appendChild(linkElement);
+
+            resultsDiv.appendChild(document.createElement('br'));
+        }else if(site.value == "Bing"){
+            var link1= 'https://www.bing.com/search?q=' + encodeURIComponent(dork);
+            var linkElement = document.createElement('a');
+            linkElement.style.color = "#2c6b1e";
+            linkElement.href = link1;
+            linkElement.target = '_blank';
+            linkElement.textContent = dork;
+            resultsDiv.appendChild(linkElement);
+
+            resultsDiv.appendChild(document.createElement('br'));
+        }else if(site.value == "Yandex"){
+            var link1= 'https://yandex.com/search/?text=' + encodeURIComponent(dork);
+            var linkElement = document.createElement('a');
+            linkElement.style.color = "#782315";
+            linkElement.href = link1;
+            linkElement.target = '_blank';
+            linkElement.textContent = dork;
+            resultsDiv.appendChild(linkElement);
+
+            resultsDiv.appendChild(document.createElement('br'));
+        }else if(site.value == "Yahoo"){
+            var link1= 'https://search.yahoo.com/search;_ylt=AwrEpmmMVUBmSMEf4VhDDWVH;_ylc=X1MDMTE5NzgwNDg2NwRfcgMyBGZyAwRmcjIDcDpzLHY6c2ZwLG06c2ItdG9wBGdwcmlkA0UxVzRsY1VPU19tSVBYeVFwN0RyREEEbl9yc2x0AzAEbl9zdWdnAzAEb3JpZ2luA3NlYXJjaC55YWhvby5jb20EcG9zAzAEcHFzdHIDBHBxc3RybAMwBHFzdHJsAzEyBHF1ZXJ5A3NpdGUlM0F0aW1lLmlyBHRfc3RtcAMxNzE1NDkyMjUz/?p=' + encodeURIComponent(dork);
+            var linkElement = document.createElement('a');
+            linkElement.style.color = "#5e2ced";
+            linkElement.href = link1;
+            linkElement.target = '_blank';
+            linkElement.textContent = dork;
+            resultsDiv.appendChild(linkElement);
+
+            resultsDiv.appendChild(document.createElement('br'));
+        }
+        
+        
+      });
+    }
+    updateSearchQuery()
+  </script>
+</body>
