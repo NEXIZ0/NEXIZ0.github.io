@@ -35,6 +35,7 @@
       var domain = document.getElementById('domain').value.trim();
       var dorks = [
         'site:' + domain + ' inurl:&',
+        '(site:' + domain + ') & intext:"choose file"',
         'site:' + domain + ' ext:php | ext:aspx | ext:asp | ext:jsp | ext:html | ext:htm',
         'site:' + domain + ' ext:log | ext:txt | ext:conf | ext:cnf | ext:ini | ext:env | ext:sh | ext:bak | ext:backup | ext:swp | ext:old | ext:~ | ext:git | ext:svn | ext:htpasswd | ext:htaccess | ext:xml | ext:reg | ext:inf | ext:rdp | ext:cfg | ext:ora',
         'site:' + domain + ' inurl:url= | inurl:return= | inurl:next= | inurl:redir= inurl:http',
