@@ -57,8 +57,14 @@
         'site:.s3.amazonaws.com "'+domain+'"',
         'site:stackoverflow.com "'+domain+'"',
         'link:' + domain,
-        'site:*.'+domain,
-        'site:*.*.'+domain,
+        'site:*.'+ domain,
+        'site:*.*.'+ domain,
+        'site:*<'+ domain + '>*',
+        'site:'+ domain + '>*',
+        'site:*<'+ domain + '.*>*',
+        'site:*<*'+ domain + '.*>*',
+        'site:*'+ domain + '.*',
+        'site:'+ domain + ' ip:127.0.0.1',
 
       ];
 
@@ -79,7 +85,7 @@
         }else if(site.value == "Bing"){
             var link1= 'https://www.bing.com/search?q=' + encodeURIComponent(dork);
             var linkElement = document.createElement('a');
-            linkElement.style.color = "#2c6b1e";
+            linkElement.style.color = "#0b83db";
             linkElement.href = link1;
             linkElement.target = '_blank';
             linkElement.textContent = dork;
