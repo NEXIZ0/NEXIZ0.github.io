@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Google Dorker</title>
+  <title>Dork & Way</title>
   <style>
     /* Reset default browser styles */
     * {
@@ -21,15 +21,41 @@
 </head>
 
 <body>
-  <h1>Google Dorker</h1>
-  <input class="domain" id="domain" oninput="updateSearchQuery()" size="50" value="example.com"></input><select name="site" id="site" onchange="updateSearchQuery()()">
+  <h1>Dork & Way</h1>
+  <input style="height: 23px; font-size: larger;" class="domain" id="domain" oninput="updateSearchQuery()" size="50" value="voorivex.academy"></input><select style="font-size: large; margin-left: 25px;height: 30px;width: 72px;" name="site" id="site" onchange="updateSearchQuery()()">
     <option style="color: #FBBC05; background-color: #4285F4;" value="Google">Google</option>
     <option style="color: #235FAF; background-color: #02B7E9;" value="Bing">Bing</option>
     <option style="color: #FC3F1D; background-color: #000000;" value="Yandex">Yandex</option>
     <option style="color: #6000D3;" value="Yahoo">Yahoo</option>
   </select>
   <br><br>
+  <h1>wayback</h1>
+  <div class="results" id="wayresults"></div>
+  <br>
+  <h1>Dorks</h1>
   <div class="results" id="results"></div>
+  <br>
+  <br>
+  <br>
+  <br>
+<!-- style of footer -->
+  <footer id="footer" style="background-color: #f8f9fa; text-align: center; padding: 10px; box-shadow: 0 -2px 5px rgba(24, 28, 218, 0.1); position: fixed; bottom: -100px; width: 100%; transition: bottom 0.3s;">
+    <p style="margin: 0; color: #2b333a;">&copy; Power by NEXIZ</p>
+</footer>
+
+<script>
+    document.addEventListener('scroll', function() {
+        const footer = document.getElementById('footer');
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            footer.style.bottom = '0';
+        } else {
+            footer.style.bottom = '-100px';
+        }
+    });
+</script>
+
+
+
   <script>
     function updateSearchQuery() {
       var domain = document.getElementById('domain').value.trim();
@@ -68,8 +94,51 @@
 
       ];
 
+      var ways = [
+        'https://web.archive.org/cdx/search/cdx?url=https://' + domain + '/',
+        'https://web.archive.org/web/20230312215851if_/https://' + domain + '/',
+        'https://web.archive.org/cdx/search/cdx?url=*.https://' + domain + '/*',
+        'https://web.archive.org/cdx/search/cdx?url=*.' + domain + '/*&fl=statuscode,timestamp,original&collapse=digest',
+        'https://web.archive.org/cdx/search/cdx?url=*.' + domain + '/*&fl=original&collapse=urlkey',
+        'https://web.archive.org/cdx/search/cdx?url=' + domain + '/robots.txt&output=text&filter=statuscode:200&fl=timestamp,original&collapse=digest',
+
+      ];
+
+      var pos = {
+        1:'Normal search on domain',
+        2:'Search for load on snap shot',
+        3:'Search on all subdomains and paths',
+        4:'all URLs have new contetnt (not duplicated)',
+        5:'For extract URL & Parameters',
+        6:'Extraxt all Robots.txt',
+      }
+      var wayresultsDiv = document.getElementById('wayresults');
+      wayresultsDiv.innerHTML = '';
+      num=1;
+      ways.forEach(function (way) {
+      var link = encodeURIComponent(way);
+      var linkElement = document.createElement('a');
+      var lable = document.createElement('lable');
+      linkElement.href = way;
+      linkElement.target = '_blank';
+      linkElement.textContent = way;
+      lable.textContent = pos[num];
+      lable.style.color="#2254d5";
+      lable.style.fontSize= "x-large";
+      linkElement.style.fontSize= "larger";
+      wayresultsDiv.appendChild(document.createElement('br'));
+      wayresultsDiv.appendChild(lable);
+      wayresultsDiv.appendChild(document.createElement('br'));
+      wayresultsDiv.appendChild(linkElement);
+
+      wayresultsDiv.appendChild(document.createElement('br'));
+      num = num+1;
+      })
+
+
       var resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = '';
+
 
       dorks.forEach(function (dork) {
         var site = document.getElementById("site");
@@ -79,6 +148,8 @@
             linkElement.href = link;
             linkElement.target = '_blank';
             linkElement.textContent = dork;
+            linkElement.style.fontSize= "larger";
+            resultsDiv.appendChild(document.createElement('br'));
             resultsDiv.appendChild(linkElement);
 
             resultsDiv.appendChild(document.createElement('br'));
@@ -89,6 +160,8 @@
             linkElement.href = link1;
             linkElement.target = '_blank';
             linkElement.textContent = dork;
+            linkElement.style.fontSize= "larger";
+            resultsDiv.appendChild(document.createElement('br'));
             resultsDiv.appendChild(linkElement);
 
             resultsDiv.appendChild(document.createElement('br'));
@@ -99,6 +172,8 @@
             linkElement.href = link1;
             linkElement.target = '_blank';
             linkElement.textContent = dork;
+            linkElement.style.fontSize= "larger";
+            resultsDiv.appendChild(document.createElement('br'));
             resultsDiv.appendChild(linkElement);
 
             resultsDiv.appendChild(document.createElement('br'));
@@ -109,6 +184,8 @@
             linkElement.href = link1;
             linkElement.target = '_blank';
             linkElement.textContent = dork;
+            linkElement.style.fontSize= "larger";
+            resultsDiv.appendChild(document.createElement('br'));
             resultsDiv.appendChild(linkElement);
 
             resultsDiv.appendChild(document.createElement('br'));
