@@ -18,6 +18,10 @@ def main():
     
     found_urls = []  # List to store URLs where keyword was found
     
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+    }
+    
     try:
         with open(parameters_file, 'r') as file:
             parameters = file.readlines()
@@ -39,7 +43,7 @@ def main():
 
             for value in progress_bar:
                 url = f"{base_url}&{param}={value}"
-                response = requests.get(url)
+                response = requests.get(url, headers=headers)
                 
                 for keyword in ["nexiz'", 'nexiz"', "nexiz<"]:
                     if keyword in response.text:
@@ -51,11 +55,11 @@ def main():
                 time.sleep(1)
             
             urlX = f"{base_url}&{param}=test&{param}=nexiz"
-            responseX = requests.get(urlX)
+            responseX = requests.get(urlX, headers=headers)
             if "nexiz" in responseX.text:
                 for value in values:
                     urlZ = f"{base_url}&{param}=test&{param}={value}"
-                    responseZ = requests.get(urlZ)
+                    responseZ = requests.get(urlZ, headers=headers)
                 
                     for keyword in ["nexiz'", 'nexiz"', "nexiz<"]:
                         if keyword in responseZ.text:
