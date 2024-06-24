@@ -49,7 +49,23 @@ def main():
                         progress_bar.set_description(f"Found {param}", refresh=True)
                         break
                 time.sleep(1)
+            
+            urlX = f"{base_url}&{param}=test&{param}=nexiz"
+            responseX = requests.get(urlX)
+            if "nexiz" in responseX.text:
+                for value in values:
+                    urlZ = f"{base_url}&{param}=test&{param}={value}"
+                    responseZ = requests.get(urlZ)
                 
+                    for keyword in ["nexiz'", 'nexiz"', "nexiz<"]:
+                        if keyword in responseZ.text:
+                            found_any = True
+                            found_urls.append(urlZ)  # Store the URL where keyword was found
+                            progress_bar.set_postfix(found="YES", refresh=True)
+                            progress_bar.set_description(f"Found {param}", refresh=True)
+                            break
+                    time.sleep(1)
+            
             if found_any:
                 print(f"Found: {param}")
             else:
