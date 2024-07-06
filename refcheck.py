@@ -29,10 +29,10 @@ def main():
     
     payloads = [
         "nexiz%22", "nexiz%2522", 'nexiz%27', "nexiz%2527",
-        "nexiz%3C", "nexiz%253C"
+        "nexiz%3C", "nexiz%253C", "<%=901*1100%>", "{{901*1100}}", "${901*1100}", "@(901+1100)", "${{901*1100}}",
     ]
     
-    keywords = ["nexiz'", 'nexiz"', "nexiz<"]
+    keywords = ["nexiz'", 'nexiz"', "nexiz<", "991100"]
     
     try:
         with open(parameters_file, 'r') as file:
