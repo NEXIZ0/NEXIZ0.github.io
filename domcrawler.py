@@ -65,7 +65,7 @@ def fetch_url_content(url):
             response.raise_for_status()
             return response.text
     except httpx.RequestError as e:
-        a=f"Failed to fetch {url}: {e}"
+           a = f"Failed to fetch {url}: {e}"
 
     return ""
 
@@ -105,3 +105,4 @@ if __name__ == "__main__":
     else:
         file_path = sys.argv[1]
         main(file_path)
+                        
