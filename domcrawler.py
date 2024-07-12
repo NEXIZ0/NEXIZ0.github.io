@@ -5,6 +5,17 @@ from tqdm import tqdm
 from urllib.parse import urlparse
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:108.0) Gecko/20100101 Firefox/108.0"
+HEADERS = {
+    'User-Agent': USER_AGENT,
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1'
+}
 TLDS = (
     '.com', '.org', '.net', '.gov', '.edu', '.mil', '.int', '.biz', '.info', '.io', 
     '.co', '.uk', '.ca', '.au', '.jp', '.de', '.fr', '.it', '.cn', '.ru', '.br', 
@@ -27,10 +38,20 @@ def read_domains(file_path):
 
 def fetch_url_content(url):
     """Fetches content from the URL following the specified sequence."""
-    headers = {'User-Agent': USER_AGENT, 'Referer': url}
-
+    headers = HEADERS.copy()
+    headers['Referer'] = url
+    
     try:
-        # 1) HTTP/1.1 on HTTPS
+        # 1) HTTP/2 on HTTPS
+        with httpx.Client(http2=True) as client:
+            response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError:
+        pass
+    
+    try:
+        # 2) HTTP/1.1 on HTTPS
         with httpx.Client(http2=False) as client:
             response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
@@ -39,10 +60,10 @@ def fetch_url_content(url):
         pass
 
     try:
-        # 2) HTTP/1.1 on HTTP
+        # 3) HTTP/2 on HTTP
         url_http = url.replace("https://", "http://")
         headers['Referer'] = url_http
-        with httpx.Client(http2=False) as client:
+        with httpx.Client(http2=True) as client:
             response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
@@ -50,17 +71,8 @@ def fetch_url_content(url):
         pass
 
     try:
-        # 3) HTTP/2 on HTTPS
-        with httpx.Client(http2=True) as client:
-            response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
-            response.raise_for_status()
-            return response.text
-    except httpx.RequestError:
-        pass
-
-    try:
-        # 4) HTTP/2 on HTTP
-        with httpx.Client(http2=True) as client:
+        # 4) HTTP/1.1 on HTTP
+        with httpx.Client(http2=False) as client:
             response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
@@ -105,4 +117,3 @@ if __name__ == "__main__":
     else:
         file_path = sys.argv[1]
         main(file_path)
-                        
