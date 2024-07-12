@@ -32,7 +32,7 @@ def fetch_url_content(url):
     try:
         # 1) HTTP/1.1 on HTTPS
         with httpx.Client(http2=False) as client:
-            response = client.get(url, headers=headers, timeout=5, follow_redirects=True)
+            response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -43,7 +43,7 @@ def fetch_url_content(url):
         url_http = url.replace("https://", "http://")
         headers['Referer'] = url_http
         with httpx.Client(http2=False) as client:
-            response = client.get(url_http, headers=headers, timeout=5, follow_redirects=True)
+            response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -52,7 +52,7 @@ def fetch_url_content(url):
     try:
         # 3) HTTP/2 on HTTPS
         with httpx.Client(http2=True) as client:
-            response = client.get(url, headers=headers, timeout=5, follow_redirects=True)
+            response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -61,7 +61,7 @@ def fetch_url_content(url):
     try:
         # 4) HTTP/2 on HTTP
         with httpx.Client(http2=True) as client:
-            response = client.get(url_http, headers=headers, timeout=5, follow_redirects=True)
+            response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
             response.raise_for_status()
             return response.text
     except httpx.RequestError as e:
