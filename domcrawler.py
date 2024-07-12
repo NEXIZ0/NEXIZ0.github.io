@@ -1,6 +1,6 @@
 import sys
 import re
-import requests
+import httpx
 from tqdm import tqdm
 from urllib.parse import urlparse
 
@@ -26,23 +26,47 @@ def read_domains(file_path):
         sys.exit(1)
 
 def fetch_url_content(url):
-    """Fetches content from the URL, first trying HTTPS, then HTTP if HTTPS fails."""
+    """Fetches content from the URL following the specified sequence."""
     headers = {'User-Agent': USER_AGENT, 'Referer': url}
+
     try:
-        response = requests.get(url, headers=headers, timeout=5, allow_redirects=True)
-        response.raise_for_status()
-        return response.text
-    except requests.exceptions.RequestException:
-        # Retry with HTTP if HTTPS fails
-        if url.startswith("https://"):
-            try:
-                url = url.replace("https://", "http://")
-                headers = {'User-Agent': USER_AGENT, 'Referer': url}
-                response = requests.get(url, headers=headers, timeout=5, allow_redirects=True)
-                response.raise_for_status()
-                return response.text
-            except requests.exceptions.RequestException as e:
-                a=f"Failed to fetch {url}: {e}"
+        # 1) HTTP/1.1 on HTTPS
+        with httpx.Client(http2=False) as client:
+            response = client.get(url, headers=headers, timeout=5, follow_redirects=True)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError:
+        pass
+
+    try:
+        # 2) HTTP/1.1 on HTTP
+        url_http = url.replace("https://", "http://")
+        headers['Referer'] = url_http
+        with httpx.Client(http2=False) as client:
+            response = client.get(url_http, headers=headers, timeout=5, follow_redirects=True)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError:
+        pass
+
+    try:
+        # 3) HTTP/2 on HTTPS
+        with httpx.Client(http2=True) as client:
+            response = client.get(url, headers=headers, timeout=5, follow_redirects=True)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError:
+        pass
+
+    try:
+        # 4) HTTP/2 on HTTP
+        with httpx.Client(http2=True) as client:
+            response = client.get(url_http, headers=headers, timeout=5, follow_redirects=True)
+            response.raise_for_status()
+            return response.text
+    except httpx.RequestError as e:
+        a=f"Failed to fetch {url}: {e}"
+
     return ""
 
 def search_domains(content):
