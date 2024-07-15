@@ -8,12 +8,12 @@ dns_brute_full () {
 	echo "[!] shuffledns static brute-force..."
 	shuffledns -mode resolve -t 30 -silent -list $1.wordlist -d $1 -r ~/.resolver -m $(which massdns) | tee $1.dns_brute 2>&1 > /dev/null
 	echo "[+] finished, total $(wc -l $1.dns_brute) resolved..."
-	echo "running subfinder..."
-	subfinder -d $1 -all | dnsx -t 20 -retry 3 -r ~/.resolver -silent | anew $1.dns_brute 2>&1 > /dev/null
+	echo "[!] running subfinder..."
+	subfinder -d $1 -all -silent | dnsx -t 20 -retry 3 -r ~/.resolver -silent | anew $1.dns_brute 2>&1 > /dev/null
 	echo "[+] finished, total $(wc -l $1.dns_brute) resolved..."
 	echo "[!] Make word list ( dnsjen + altdns )"
 	curl -s https://raw.githubusercontent.com/infosec-au/altdns/master/words.txt -o altdns-words.txt && curl -s https://raw.githubusercontent.com/ProjectAnte/dnsgen/master/dnsgen/words.txt -o dnsgen-words.txt && cat altdns-words.txt dnsgen-words.txt | sort -u > words-merged.txt && echo "2020\n2021\n2022\n2023\n2024\n2025" >> words-merged.txt && rm altdns-words.txt dnsgen-words.txt
-	echo "running DNSGen..."
+	echo "[!] running DNSGen..."
 	cat $1.dns_brute | dnsgen -w words-merged.txt - | egrep -v "^\." | egrep -v ".*\.\..*" | egrep -v ".*\-\..*" | egrep -v "^\-" | sort -u > $1.dns_gen 2>&1 > /dev/null
 	echo "[+] finished with $(wc -l $1.dns_gen) words..."
 	echo "[!] shuffledns dynamic brute-force on dnsgen results..."
