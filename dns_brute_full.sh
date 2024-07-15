@@ -2,7 +2,7 @@ dns_brute_full () {
         echo "[!] cleaning..."
         rm -f "$1.wordlist $1.dns_brute $1.dns_gen"
 	echo "[!] making static world list..."
-	curl -s https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -o best-dns-wordlist.txt && curl -s https://wordlists-cdn.assetnote.io/data/manual/2m-subdomains.txt -o 2m-subdomains.txt && crunch 1 4 abcdefghijklmnopqrstuvwxyz1234567890 > 4-word.txt && cat best-dns-wordlist.txt 4-word.txt 2m-subdomains.txt | tr '[upper]' '[lower]' | sort -u > static-dns-brute.worldlist.txt && rm 2m-subdomains.txt 4-word.txt best-dns-wordlist.txt
+	curl -s https://wordlists-cdn.assetnote.io/data/manual/best-dns-wordlist.txt -o best-dns-wordlist.txt && curl -s https://wordlists-cdn.assetnote.io/data/manual/2m-subdomains.txt -o 2m-subdomains.txt && crunch 1 4 abcdefghijklmnopqrstuvwxyz1234567890 > 4-word.txt && cat best-dns-wordlist.txt 4-word.txt 2m-subdomains.txt | tr '[:upper:]' '[:lower:]' | sort -u > static-dns-brute.worldlist.txt && rm 2m-subdomains.txt 4-word.txt best-dns-wordlist.txt
 	awk -v domain="$1" '{print $0"."domain}' "static-dns-brute.worldlist.txt" >> "$1.wordlist"
 	rm static-dns-brute.worldlist.txt
 	echo "[!] shuffledns static brute-force..."
