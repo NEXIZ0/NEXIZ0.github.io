@@ -19,6 +19,7 @@ dns_brute_full () {
 	echo "[!] shuffledns dynamic brute-force on dnsgen results..."
 	shuffledns -mode resolve -t 30 -silent -list $1.dns_gen -d $1 -r ~/.resolver -m $(which massdns) | anew $1.dns_brute 2>&1 > /dev/null
 	echo "[+] finished, total $(wc -l $1.dns_brute) resolved..."
+ 	rm $1.dns_gen $1.wordlist
 }
 
 
