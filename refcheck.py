@@ -56,6 +56,7 @@ def main():
                     found_any = True
                     count += 1
                     found_urls.append(url)
+                    print(url)
                     progress_bar.set_postfix(found="YES", refresh=True)
                     progress_bar.set_description(f"Found {param}", refresh=True)
                 time.sleep(1.5)
@@ -72,6 +73,7 @@ def main():
                         found_any = True
                         count += 1
                         found_urls.append(url)
+                        print(url)
                         progress_bar.set_postfix(found="YES", refresh=True)
                         progress_bar.set_description(f"Found {param}", refresh=True)
                     time.sleep(1.5)
@@ -84,6 +86,7 @@ def main():
                     found_any = True
                     count += 1
                     found_urls.append(f"POST: {data}")
+                    print(f"POST: {data}")
                     progress_bar.set_postfix(found="YES", refresh=True)
                     progress_bar.set_description(f"Found {param}", refresh=True)
                 time.sleep(1.5)
@@ -98,6 +101,7 @@ def main():
                         found_any = True
                         count += 1
                         found_urls.append(f"POST: {dataz}")
+                        print(f"POST: {dataz}")
                         progress_bar.set_postfix(found="YES", refresh=True)
                         progress_bar.set_description(f"Found {param}", refresh=True)
                     time.sleep(1.5)
