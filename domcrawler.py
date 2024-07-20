@@ -41,10 +41,16 @@ def fetch_url_content(url):
     headers = HEADERS.copy()
     headers['Referer'] = url
     
+    def should_skip(status_code):
+        """Returns True if the status code is in the 4XX or 5XX range."""
+        return 400 <= status_code < 600
+
     try:
         # 1) HTTP/2 on HTTPS
         with httpx.Client(http2=True) as client:
             response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
+            if should_skip(response.status_code):
+                return ""
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -54,6 +60,8 @@ def fetch_url_content(url):
         # 2) HTTP/1.1 on HTTPS
         with httpx.Client(http2=False) as client:
             response = client.get(url, headers=headers, timeout=4, follow_redirects=True)
+            if should_skip(response.status_code):
+                return ""
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -65,6 +73,8 @@ def fetch_url_content(url):
         headers['Referer'] = url_http
         with httpx.Client(http2=True) as client:
             response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
+            if should_skip(response.status_code):
+                return ""
             response.raise_for_status()
             return response.text
     except httpx.RequestError:
@@ -74,6 +84,8 @@ def fetch_url_content(url):
         # 4) HTTP/1.1 on HTTP
         with httpx.Client(http2=False) as client:
             response = client.get(url_http, headers=headers, timeout=4, follow_redirects=True)
+            if should_skip(response.status_code):
+                return ""
             response.raise_for_status()
             return response.text
     except httpx.RequestError as e:
