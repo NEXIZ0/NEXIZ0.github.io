@@ -1,4 +1,22 @@
-dns_brute_full() {
+# Custom progress bar function
+progress_bar() {
+    local PROG_BAR_WIDTH=50
+    local PROG_BAR_CHAR_DONE="#"
+    local PROG_BAR_CHAR_TODO="-"
+    local PROG_BAR_MSG="${2:-Progress}"
+
+    local percent=$(bc <<< "scale=2; $1 * 100 / $2")
+    local done=$(bc <<< "scale=0; $1 * $PROG_BAR_WIDTH / $2")
+    local todo=$(bc <<< "$PROG_BAR_WIDTH - $done")
+
+    local done_bar=$(printf "%${done}s" | tr ' ' "${PROG_BAR_CHAR_DONE}")
+    local todo_bar=$(printf "%${todo}s" | tr ' ' "${PROG_BAR_CHAR_TODO}")
+
+    printf "\r[${done_bar}${todo_bar}] ${PROG_BAR_MSG}: ${percent}%% (${1}/${2})"
+}
+
+# Main function
+dns_brute_up() {
     echo "[!] Cleaning..."
     rm -f "$1.wordlist" "$1.dns_gen" "$1.dns_brute"
 
@@ -14,7 +32,15 @@ dns_brute_full() {
 
     echo "[!] Start shuffledns static brute-force..."
     total_lines=$(wc -l < "$1.wordlist")
-    pv -l -s $total_lines "$1.wordlist" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | tee "$1.dns_brute" > /dev/null
+    current_line=0
+
+    while IFS= read -r line; do
+        echo "$line" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) >> "$1.dns_brute"
+        ((current_line++))
+        progress_bar $current_line $total_lines "Shuffledns Static Brute-Force"
+    done < "$1.wordlist"
+
+    echo ""
     echo "[+] Finished shuffledns static, total $(wc -l < "$1.dns_brute") resolved..."
 
     echo "[!] Running subfinder..."
@@ -30,12 +56,28 @@ dns_brute_full() {
 
     echo "[!] Running DNSGen..."
     total_lines=$(wc -l < "$1.dns_brute")
-    cat "$1.dns_brute" | pv -l -s $total_lines | dnsgen -w words-merged.txt - | egrep --color=auto -v "^\." | egrep --color=auto -v ".*\.\..*" | egrep --color=auto -v ".*\-\..*" | egrep --color=auto -v "^\-" | sort -u > "$1.dns_gen"
+    current_line=0
+
+    cat "$1.dns_brute" | while IFS= read -r line; do
+        echo "$line" | dnsgen -w words-merged.txt - | egrep --color=auto -v "^\." | egrep --color=auto -v ".*\.\..*" | egrep --color=auto -v ".*\-\..*" | egrep --color=auto -v "^\-" | sort -u >> "$1.dns_gen"
+        ((current_line++))
+        progress_bar $current_line $total_lines "DNSGen Generation"
+    done
+
+    echo ""
     echo "[+] Finished with $(wc -l < "$1.dns_gen") words..."
 
     echo "[!] Shuffledns dynamic brute-force on dnsgen results..."
     total_lines=$(wc -l < "$1.dns_gen")
-    pv -l -s $total_lines "$1.dns_gen" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | anew "$1.dns_brute" > /dev/null
+    current_line=0
+
+    while IFS= read -r line; do
+        echo "$line" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | anew "$1.dns_brute" > /dev/null
+        ((current_line++))
+        progress_bar $current_line $total_lines "Shuffledns Dynamic Brute-Force"
+    done < "$1.dns_gen"
+
+    echo ""
     echo "[+] Finished, total $(wc -l < "$1.dns_brute") resolved..."
 
     # Compare word list with resolved domains
