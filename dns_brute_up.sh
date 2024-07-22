@@ -1,4 +1,4 @@
-dns_brute_up() {
+dns_brute_full() {
     echo "[!] Cleaning..."
     rm -f "$1.wordlist" "$1.dns_gen" "$1.dns_brute"
 
@@ -14,11 +14,11 @@ dns_brute_up() {
 
     echo "[!] Start shuffledns static brute-force..."
     total_lines=$(wc -l < "$1.wordlist")
-    pv -l -s $total_lines "$1.wordlist" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | tee "$1.dns_brute" 2>&1 > /dev/null
+    pv -l -s $total_lines "$1.wordlist" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | tee "$1.dns_brute" > /dev/null
     echo "[+] Finished shuffledns static, total $(wc -l < "$1.dns_brute") resolved..."
 
     echo "[!] Running subfinder..."
-    subfinder -d "$1" -all -silent | dnsx -t 20 -retry 3 -r ~/.resolver -silent | anew "$1.dns_brute" 2>&1 > /dev/null
+    subfinder -d "$1" -all -silent | dnsx -t 20 -retry 3 -r ~/.resolver -silent | anew "$1.dns_brute" > /dev/null
     echo "[+] Finished, total $(wc -l < "$1.dns_brute") resolved..."
 
     echo "[!] Make word list (dnsgen + altdns)"
@@ -30,12 +30,12 @@ dns_brute_up() {
 
     echo "[!] Running DNSGen..."
     total_lines=$(wc -l < "$1.dns_brute")
-    pv -l -s $total_lines "$1.dns_brute" | dnsgen -w words-merged.txt - | egrep --color=auto -v "^\." | egrep --color=auto -v ".*\.\..*" | egrep --color=auto -v ".*\-\..*" | egrep --color=auto -v "^\-" | sort -u > "$1.dns_gen" 2>&1 > /dev/null
+    cat "$1.dns_brute" | pv -l -s $total_lines | dnsgen -w words-merged.txt - | egrep --color=auto -v "^\." | egrep --color=auto -v ".*\.\..*" | egrep --color=auto -v ".*\-\..*" | egrep --color=auto -v "^\-" | sort -u > "$1.dns_gen"
     echo "[+] Finished with $(wc -l < "$1.dns_gen") words..."
 
     echo "[!] Shuffledns dynamic brute-force on dnsgen results..."
     total_lines=$(wc -l < "$1.dns_gen")
-    pv -l -s $total_lines "$1.dns_gen" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | anew "$1.dns_brute" 2>&1 > /dev/null
+    pv -l -s $total_lines "$1.dns_gen" | shuffledns -mode resolve -t 30 -silent -list /dev/stdin -d "$1" -r ~/.resolver -m $(which massdns) | anew "$1.dns_brute" > /dev/null
     echo "[+] Finished, total $(wc -l < "$1.dns_brute") resolved..."
 
     # Compare word list with resolved domains
