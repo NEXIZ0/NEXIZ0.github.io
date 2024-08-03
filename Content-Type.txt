@@ -1,0 +1,9 @@
+application/json
+application/xml
+application/x-www-form-urlencoded
+multipart/form-data
+text/plain
+text/html
+application/javascript
+application/octet-stream
+application/zip
