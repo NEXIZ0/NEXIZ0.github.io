@@ -56,7 +56,7 @@ def create_urls_with_parameters_fallparams(url, params_from_scan, parameters, ch
 
     # Update the number of filtered results
     filtered_res_num = len(filtered_params)
-    print(f"{colors.GRAY}done for \"{url}\", results: {filtered_res_num}{colors.RESET}")
+    print(f"{colors.GRAY}Scan Parameter done for \"{url}\", results: {filtered_res_num}{colors.RESET}")
 
     for param_value in parameters:
         for i in range(0, len(filtered_params), chunk_size):
@@ -103,7 +103,7 @@ def main():
         return
 
     for url in urls:
-        print(f"{colors.GRAY}simple permutation for: \"{url}\"{colors.RESET}")
+        print(f"{colors.GRAY}Simple Permutation for: \"{url}\"{colors.RESET}")
         generated_urls = create_urls_with_parameters(url, parameters)
         for generated_url in generated_urls:
             print(generated_url)
