@@ -21,15 +21,10 @@ rapiddns() {
   echo "Initial result: $result"  # Debugging output
 
   if [ "$result" -eq 0 ]; then
-    total=$(fetch_total)
-    result=$(echo "$total / 100" | bc)
-    echo "Re-fetched result: $result"  # Debugging output
+    result=1  # Ensure at least one page is fetched
   fi
 
-  if [ "$result" -ne 0 ]; then
-    result=$(echo "$result + 1" | bc)
-    echo "Final result (pages to fetch): $result"  # Debugging output
-  fi
+  echo "Final result (pages to fetch): $result"  # Debugging output
   
   # Loop through the number of pages
   for i in $(seq 1 "$result")
@@ -40,13 +35,18 @@ rapiddns() {
     sleep 5
   done
   
-  # Extract and filter results
-  awk -F'</?td>' '{ for(i=2; i<=NF; i+=2) print $i }' "$tmp_file" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
-  grep -oP 'href="\K[^"]*' "$tmp_file" | cut -d "/" -f 3 | sed "s/#result//g" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
-  
-  # Clean up temporary files
-  rm "$tmp_file"
-  rm "$tmp_file2"
+  # Check if the file was created
+  if [ -f "$tmp_file" ]; then
+    # Extract and filter results
+    awk -F'</?td>' '{ for(i=2; i<=NF; i+=2) print $i }' "$tmp_file" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
+    grep -oP 'href="\K[^"]*' "$tmp_file" | cut -d "/" -f 3 | sed "s/#result//g" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
+    
+    # Clean up temporary files
+    rm "$tmp_file"
+    rm "$tmp_file2"
+  else
+    echo "No data fetched for $domain"
+  fi
 }
 
 # Run the function with the argument provided
