@@ -15,30 +15,39 @@ rapiddns() {
   }
 
   total=$(fetch_total)
+  echo "Total records: $total"  # Debugging output
+
   result=$(echo "$total / 100" | bc)
+  echo "Initial result: $result"  # Debugging output
 
   if [ "$result" -eq 0 ]; then
     total=$(fetch_total)
     result=$(echo "$total / 100" | bc)
+    echo "Re-fetched result: $result"  # Debugging output
   fi
 
   if [ "$result" -ne 0 ]; then
     result=$(echo "$result + 1" | bc)
+    echo "Final result (pages to fetch): $result"  # Debugging output
   fi
-
+  
   # Loop through the number of pages
   for i in $(seq 1 "$result")
   do
+    echo "Fetching page $i"  # Debugging output
     curl -s "https://rapiddns.io/subdomain/$domain?page=$i" \
       -H "user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" >> "$tmp_file"
     sleep 5
   done
-
+  
   # Extract and filter results
   awk -F'</?td>' '{ for(i=2; i<=NF; i+=2) print $i }' "$tmp_file" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
   grep -oP 'href="\K[^"]*' "$tmp_file" | cut -d "/" -f 3 | sed "s/#result//g" | grep -Ei "$domain$" | sort -u | anew "$tmp_file2"
-
+  
   # Clean up temporary files
   rm "$tmp_file"
   rm "$tmp_file2"
 }
+
+# Run the function with the argument provided
+rapiddns "$1"
