@@ -15,14 +15,9 @@ rapiddns() {
   }
 
   total=$(fetch_total)
-  echo "Total records: $total"  # Debugging output
 
-  result=$(echo "$total / 100" | bc)
-  echo "Initial result: $result"  # Debugging output
-
-  if [ "$result" -eq 0 ]; then
-    result=1  # Ensure at least one page is fetched
-  fi
+  # Ensure at least one page is fetched, even if total is less than 100
+  result=$(echo "($total / 100) + 1" | bc)
 
   echo "Final result (pages to fetch): $result"  # Debugging output
   
