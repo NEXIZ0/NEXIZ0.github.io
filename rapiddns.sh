@@ -18,10 +18,13 @@ rapiddns() {
 
   # Ensure at least one page is fetched, even if total is less than 100
   result=$(echo "($total / 100) + 1" | bc)
+
+  echo "Final result (pages to fetch): $result"  # Debugging output
   
   # Loop through the number of pages
   for i in $(seq 1 "$result")
   do
+    echo "Fetching page $i"  # Debugging output
     curl -s "https://rapiddns.io/subdomain/$domain?page=$i" \
       -H "user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" >> "$tmp_file"
     sleep 5
@@ -41,4 +44,5 @@ rapiddns() {
   fi
 }
 
+# Run the function with the argument provided
 rapiddns "$1"
