@@ -1,4 +1,4 @@
-print_lines() {
+super_fuzz() {
   url="$1"
   filter="$2"
   local file="/root/test.txt"
