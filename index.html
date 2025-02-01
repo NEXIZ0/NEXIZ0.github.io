@@ -95,6 +95,7 @@
       ];
 
       var ways = [
+        'https://web.archive.org/web/*/https://' + domain + '/*',
         'https://web.archive.org/cdx/search/cdx?url=https://' + domain + '/',
         'https://web.archive.org/web/20230312215851if_/https://' + domain + '/',
         'https://web.archive.org/cdx/search/cdx?url=*.https://' + domain + '/*',
@@ -105,12 +106,13 @@
       ];
 
       var pos = {
-        1:'Normal search on domain',
-        2:'Search for load on snap shot',
-        3:'Search on all subdomains and paths',
-        4:'all URLs have new contetnt (not duplicated)',
-        5:'For extract URL & Parameters',
-        6:'Extraxt all Robots.txt',
+        1: 'Search on web site',
+        2:'Normal search on domain',
+        3:'Search for load on snap shot',
+        4:'Search on all subdomains and paths',
+        5:'all URLs have new contetnt (not duplicated)',
+        6:'For extract URL & Parameters',
+        7:'Extraxt all Robots.txt',
       }
       var wayresultsDiv = document.getElementById('wayresults');
       wayresultsDiv.innerHTML = '';
